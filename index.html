@@ -187,33 +187,33 @@
 <body>
   <main class="app">
     <h1>📚 六年級期中評量單字句型練習</h1>
-    <p class="subtitle">作答後按 <strong>Enter 鍵</strong>、點擊卡片或按下「下一題」即可跳下一題！</p>
+    <p class="subtitle"> <strong>Enjory!</strong> </p>
 
     <section id="quiz">
       <div class="toolbar">
-        <select id="category" aria-label="選擇練習主題">
-          <option value="all">全部主題</option>
-          <option value="Foods">Foods 食物</option>
-          <option value="Quantifiers">Quantifiers 量詞</option>
-          <option value="Transportation">Transportation 交通工具</option>
-          <option value="Sentences">Sentences 句型</option>
+        <select id="category" aria-label="Select Category">
+          <option value="all">All Categories</option>
+          <option value="Foods">Foods</option>
+          <option value="Quantifiers">Quantifiers</option>
+          <option value="Transportation">Transportation</option>
+          <option value="Sentences">Sentences</option>
         </select>
 
-        <select id="mode" aria-label="選擇作答方式">
-          <option value="mixed">混合題型</option>
-          <option value="choice">選擇題</option>
-          <option value="typing">英文輸入</option>
-          <option value="blank">句子填空</option>
+        <select id="mode" aria-label="Select Mode">
+          <option value="mixed">Mixed Mode</option>
+          <option value="choice">Multiple Choice</option>
+          <option value="typing">Typing</option>
+          <option value="blank">Fill in the Blank</option>
         </select>
 
-        <select id="questionCount" aria-label="選擇題目數量">
-          <option value="10">10 題</option>
-          <option value="20">20 題</option>
-          <option value="30">30 題</option>
-          <option value="all" selected>全部題目</option>
+        <select id="questionCount" aria-label="Select Question Count">
+          <option value="10">10 Questions</option>
+          <option value="20">20 Questions</option>
+          <option value="30">30 Questions</option>
+          <option value="all" selected>All Questions</option>
         </select>
 
-        <div class="score">答對：<span id="score">0</span></div>
+        <div class="score">Score: <span id="score">0</span></div>
       </div>
 
       <div id="counter" class="meta"></div>
@@ -226,26 +226,26 @@
         <div id="picture" class="picture"></div>
         <div class="prompt-row">
           <p id="prompt" class="prompt"></p>
-          <button id="speakBtn" class="speaker-btn" title="朗讀英文">🔊 發音</button>
+          <button id="speakBtn" class="speaker-btn" title="Audio">🔊 Audio</button>
         </div>
         <div id="answerArea"></div>
         <div id="feedback" class="feedback" aria-live="polite"></div>
       </div>
 
       <div class="bottom-row">
-        <button id="nextBtn" class="action" disabled>下一題 → (Enter)</button>
+        <button id="nextBtn" class="action" disabled>Next → (Enter)</button>
       </div>
     </section>
 
     <section id="result" class="result hidden">
-      <h2>🎉 練習完成！</h2>
+      <h2>🎉 Practice Complete!</h2>
       <p id="resultText"></p>
       <div id="reviewArea" class="hidden">
-        <h3>📍 錯題複習</h3>
+        <h3>📍 Review Mistakes</h3>
         <div id="reviewList" class="review-list"></div>
       </div>
       <br>
-      <button id="restartBtn" class="action">再練一次</button>
+      <button id="restartBtn" class="action">Try Again</button>
     </section>
   </main>
 
@@ -411,7 +411,7 @@
           : (index % 2 === 0 ? "choice" : "typing");
       }
 
-      $("counter").textContent = `第 ${index + 1} / ${round.length} 題`;
+      $("counter").textContent = `Question ${index + 1} / ${round.length}`;
       $("progress").style.width = `${(index / round.length) * 100}%`;
 
       const pictureArea = $("picture");
@@ -420,7 +420,7 @@
       if (q.img) {
         const img = document.createElement("img");
         img.src = q.img.startsWith("images/") ? q.img : `images/${q.img}`;
-        img.alt = q.zh || q.en;
+        img.alt = q.en;
         img.onerror = () => {
           pictureArea.textContent = q.emoji || "📘";
         };
@@ -429,7 +429,7 @@
         pictureArea.textContent = q.emoji || "📘";
       }
 
-      $("questionMeta").textContent = categoryName(q.category) + (q.star ? " ★ 重點" : "");
+      $("questionMeta").textContent = categoryName(q.category) + (q.star ? " ★ Star" : "");
 
       const area = $("answerArea");
       area.innerHTML = "";
@@ -441,7 +441,7 @@
       };
 
       if (q.category === "Sentences") {
-        $("prompt").textContent = `${q.en}（${q.zh}）`;
+        $("prompt").textContent = q.en;
         if (mode === "choice") {
           showSentenceChoices(area, q);
         } else {
@@ -451,24 +451,20 @@
       }
 
       if (mode === "choice") {
-        if (q.category === "Foods") {
-          $("prompt").textContent = "看提示圖片，選出正確的英文單字。";
-        } else {
-          $("prompt").textContent = `請選出「${q.zh}」的英文。`;
-        }
+        $("prompt").textContent = "Select the correct English word based on the picture/hint.";
         showChoices(area, q, "en");
       } else {
-        $("prompt").textContent = `請輸入「${q.zh}」的英文。`;
+        $("prompt").textContent = "Type the English word.";
         showInput(area, q.en);
       }
     }
 
     function categoryName(category) {
       return {
-        Foods: "Foods 食物",
-        Quantifiers: "Quantifiers 量詞",
-        Transportation: "Transportation 交通工具",
-        Sentences: "Sentences 句型"
+        Foods: "Foods",
+        Quantifiers: "Quantifiers",
+        Transportation: "Transportation",
+        Sentences: "Sentences"
       }[category] || category;
     }
 
@@ -531,12 +527,12 @@
 
       const input = document.createElement("input");
       input.type = "text";
-      input.placeholder = "輸入答案";
+      input.placeholder = "Enter answer";
       input.autocomplete = "off";
 
       const button = document.createElement("button");
       button.className = "action";
-      button.textContent = "送出";
+      button.textContent = "Submit";
       button.onclick = (e) => {
         e.stopPropagation();
         checkAnswer(input.value, correctAnswer, null, null, round[index]);
@@ -568,11 +564,11 @@
       if (isCorrect) {
         score++;
         $("score").textContent = score;
-        $("feedback").textContent = "答對了！🎉 (按 Enter 鍵或點擊任意處進入下一題)";
+        $("feedback").textContent = "Correct! 🎉 (Press Enter or click anywhere to continue)";
         $("feedback").className = "feedback good";
         speak("Correct!");
       } else {
-        $("feedback").textContent = `再加油！正確答案是：${correct} (按 Enter 鍵進入下一題)`;
+        $("feedback").textContent = `Incorrect! Correct answer: ${correct} (Press Enter to continue)`;
         $("feedback").className = "feedback bad";
         wrongList.push({ ...currentQ, userGiven: given, targetCorrect: correct });
       }
@@ -611,7 +607,7 @@
         $("quiz").classList.add("hidden");
         $("result").classList.remove("hidden");
         $("progress").style.width = "100%";
-        $("resultText").textContent = `本次練習共 ${round.length} 題，您答對了 ${score} 題！`;
+        $("resultText").textContent = `Total questions: ${round.length}, Score: ${score}!`;
 
         const reviewArea = $("reviewArea");
         const reviewList = $("reviewList");
@@ -622,8 +618,8 @@
           wrongList.forEach(item => {
             const div = document.createElement("div");
             div.className = "review-item";
-            const qTitle = item.category === "Sentences" ? item.en : item.zh;
-            div.innerHTML = `<strong>${qTitle}</strong><br><span style="color:#c64c4c">您的回答：${item.userGiven || "(未作答)"}</span> ➔ <span style="color:#21834b">正確答案：${item.targetCorrect}</span>`;
+            const qTitle = item.en;
+            div.innerHTML = `<strong>${qTitle}</strong><br><span style="color:#c64c4c">Your answer: ${item.userGiven || "(No answer)"}</span> ➔ <span style="color:#21834b">Correct answer: ${item.targetCorrect}</span>`;
             reviewList.appendChild(div);
           });
         } else {
