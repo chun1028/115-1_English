@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>六年級期中評量單字句型練習</title>
+
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      padding: 24px;
+      background: #f3f6fb;
+      color: #253047;
+      font-family: system-ui, -apple-system, "Noto Sans TC", sans-serif;
+    }
+
+    .app {
+      width: min(760px, 100%);
+      margin: 0 auto;
+      padding: 28px;
+      background: #fff;
+      border-radius: 20px;
+      box-shadow: 0 10px 35px #26375416;
+    }
+
+    h1 { margin: 0 0 6px; text-align: center; }
+    .subtitle { margin: 0 0 24px; color: #718096; text-align: center; }
+
+    .toolbar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    select, input, button { font: inherit; border-radius: 10px; }
+
+    select, input {
+      padding: 11px 12px;
+      border: 1px solid #cbd5e1;
+      background: #fff;
+    }
+
+    select { flex: 1; min-width: 130px; }
+    .score { white-space: nowrap; color: #4456c5; font-weight: 700; margin-left: auto; }
+
+    .meta { margin-bottom: 10px; color: #718096; font-size: .92rem; }
+
+    .progress-track {
+      height: 8px;
+      margin-bottom: 20px;
+      overflow: hidden;
+      background: #e9edf5;
+      border-radius: 99px;
+    }
+
+    .progress-bar {
+      width: 0;
+      height: 100%;
+      background: #6575df;
+      transition: width .2s;
+    }
+
+    .card {
+      padding: 20px;
+      background: #f8faff;
+      border: 1px solid #edf0f7;
+      border-radius: 16px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .picture {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 150px;
+      margin-bottom: 16px;
+      background: #eaf1ff;
+      border-radius: 14px;
+      font-size: 5rem;
+      overflow: hidden;
+      padding: 12px;
+    }
+
+    .picture img {
+      max-height: 140px;
+      max-width: 100%;
+      object-fit: contain;
+    }
+
+    .prompt-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .prompt {
+      margin: 0;
+      font-size: 1.2rem;
+      font-weight: 700;
+      line-height: 1.6;
+    }
+
+    .speaker-btn {
+      background: #edf2ff;
+      border: 1px solid #c7d2fe;
+      color: #4338ca;
+      padding: 8px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1.1rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      flex-shrink: 0;
+    }
+    .speaker-btn:hover { background: #e0e7ff; }
+
+    .answers { display: grid; gap: 10px; }
+
+    button.choice {
+      padding: 12px;
+      text-align: left;
+      background: #fff;
+      border: 1px solid #dce3ef;
+      cursor: pointer;
+    }
+
+    button.choice:hover:not(:disabled) { border-color: #6575df; }
+    button.choice:disabled { cursor: default; }
+    button.choice.correct { background: #e9f8ef; border-color: #43a66b; color: #166534; font-weight: bold; }
+    button.choice.wrong { background: #fff0f0; border-color: #e17676; color: #991b1b; }
+
+    .input-row { display: flex; gap: 10px; }
+    .input-row input { flex: 1; min-width: 0; }
+
+    button.action {
+      padding: 11px 16px;
+      color: #fff;
+      background: #5869d8;
+      border: 0;
+      cursor: pointer;
+    }
+
+    button.action:hover { background: #4657c5; }
+    button.action:disabled { opacity: .5; cursor: not-allowed; }
+
+    .feedback { min-height: 26px; margin-top: 14px; font-weight: 700; }
+    .good { color: #21834b; }
+    .bad { color: #c64c4c; }
+
+    .bottom-row { display: flex; justify-content: flex-end; margin-top: 18px; }
+    .result { padding: 35px 10px; text-align: center; }
+    .hidden { display: none; }
+
+    .review-list {
+      margin-top: 20px;
+      text-align: left;
+      background: #f8fafc;
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid #e2e8f0;
+      max-height: 250px;
+      overflow-y: auto;
+    }
+    .review-item {
+      padding: 8px 0;
+      border-bottom: 1px dashed #cbd5e1;
+    }
+    .review-item:last-child { border-bottom: none; }
+
+    @media (max-width: 560px) {
+      body { padding: 12px; }
+      .app { padding: 18px; }
+      .toolbar { align-items: stretch; flex-direction: column; }
+      .score { margin-left: 0; text-align: right; }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="app">
+    <h1>📚 六年級期中評量單字句型練習</h1>
+    <p class="subtitle">作答後按 <strong>Enter 鍵</strong>、點擊卡片或按下「下一題」即可跳下一題！</p>
+
+    <section id="quiz">
+      <div class="toolbar">
+        <select id="category" aria-label="選擇練習主題">
+          <option value="all">全部主題</option>
+          <option value="Foods">Foods 食物</option>
+          <option value="Quantifiers">Quantifiers 量詞</option>
+          <option value="Transportation">Transportation 交通工具</option>
+          <option value="Sentences">Sentences 句型</option>
+        </select>
+
+        <select id="mode" aria-label="選擇作答方式">
+          <option value="mixed">混合題型</option>
+          <option value="choice">選擇題</option>
+          <option value="typing">英文輸入</option>
+          <option value="blank">句子填空</option>
+        </select>
+
+        <select id="questionCount" aria-label="選擇題目數量">
+          <option value="10">10 題</option>
+          <option value="20">20 題</option>
+          <option value="30">30 題</option>
+          <option value="all" selected>全部題目</option>
+        </select>
+
+        <div class="score">答對：<span id="score">0</span></div>
+      </div>
+
+      <div id="counter" class="meta"></div>
+      <div class="progress-track">
+        <div id="progress" class="progress-bar"></div>
+      </div>
+
+      <div class="card" id="quizCard">
+        <div id="questionMeta" class="meta"></div>
+        <div id="picture" class="picture"></div>
+        <div class="prompt-row">
+          <p id="prompt" class="prompt"></p>
+          <button id="speakBtn" class="speaker-btn" title="朗讀英文">🔊 發音</button>
+        </div>
+        <div id="answerArea"></div>
+        <div id="feedback" class="feedback" aria-live="polite"></div>
+      </div>
+
+      <div class="bottom-row">
+        <button id="nextBtn" class="action" disabled>下一題 → (Enter)</button>
+      </div>
+    </section>
+
+    <section id="result" class="result hidden">
+      <h2>🎉 練習完成！</h2>
+      <p id="resultText"></p>
+      <div id="reviewArea" class="hidden">
+        <h3>📍 錯題複習</h3>
+        <div id="reviewList" class="review-list"></div>
+      </div>
+      <br>
+      <button id="restartBtn" class="action">再練一次</button>
+    </section>
+  </main>
+
+  <script>
+    const rawFoods = [
+      ["a pear", "水梨", "🍐", "a_pear.png", false],
+      ["a peach", "桃子", "🍑", "a_peach.png", false],
+      ["a kiwi", "奇異果", "🥝", "a_kiwi.png", false],
+      ["an egg", "雞蛋", "🥚", "an_egg.png", true],
+      ["an orange", "柳橙", "🍊", "an_orange.png", true],
+      ["a pineapple", "鳳梨", "🍍", "a_pineapple.png", false],
+      ["a pepper", "甜椒／胡椒", "🫑", "a_pepper.png", false],
+      ["an onion", "洋蔥", "🧅", "an_onion.png", false],
+      ["a potato", "馬鈴薯", "🥔", "a_potato.png", false],
+      ["a carrot", "胡蘿蔔", "🥕", "a_carrot.png", false],
+      ["a tomato", "番茄", "🍅", "a_tomato.png", false],
+      ["chips", "洋芋片／薯片", "🍟", "chips.png", false],
+      ["butter", "奶油", "🧈", "butter.png", false],
+      ["sugar", "糖", "🍬", "sugar.png", false],
+      ["flour", "麵粉", "🌾", "flour.png", false],
+      ["milk", "牛奶", "🥛", "milk.png", true],
+      ["chocolate", "巧克力", "🍫", "chocolate.png", false],
+      ["cheese", "起司／芝士", "🧀", "cheese.png", false],
+      ["meat", "肉類", "🥩", "meat.png", false],
+      ["cake", "蛋糕", "🍰", "cake.png", true],
+      ["cereal", "麥片／穀片", "🥣", "cereal.png", false],
+      ["lemonade", "檸檬汁", "🍋", "lemonade.png", false],
+      ["soda", "汽水／碳酸飲料", "🥤", "soda.png", false],
+      ["tea", "茶", "🍵", "tea.png", true],
+      ["candy", "糖果", "🍭", "candy.png", false],
+      ["soup", "湯", "🍲", "soup.png", false],
+      ["fish", "魚肉／魚", "🐟", "fish.png", true],
+      ["salad", "沙拉", "🥗", "salad.png", true],
+      ["lettuce", "萵苣／生菜", "🥬", "lettuce.png", false],
+      ["bread", "麵包", "🍞", "bread.png", true]
+    ];
+
+    const rawQuantifiers = [
+      ["a basket of", "一籃", "🧺", "a_basket_of.png", false],
+      ["a bag of", "一袋", "🛍️", "a_bag_of.png", false],
+      ["a carton of", "一紙盒", "🧃", "a_carton_of.png", false],
+      ["a piece of", "一片／張／塊", "🍕", "a_piece_of.png", false],
+      ["a box of", "一盒", "📦", "a_box_of.png", false],
+      ["a can of", "一罐（金屬罐）", "🥫", "a_can_of.png", false],
+      ["a bottle of", "一瓶", "🍾", "a_bottle_of.png", false],
+      ["a cup of", "一杯（杯子／熱飲）", "☕", "a_cup_of.png", false],
+      ["a bar of", "一條（長條狀）", "🍫", "a_bar_of.png", false],
+      ["a glass of", "一杯（玻璃杯／冷飲）", "🍷", "a_glass_of.png", true],
+      ["a bowl of", "一碗", "🥣", "a_bowl_of.png", false],
+      ["a plate of", "一盤", "🍽️", "a_plate_of.png", false],
+      ["a spoon of", "一湯匙", "🥄", "a_spoon_of.png", false]
+    ];
+
+    const rawTransportation = [
+      ["by scooter", "騎機車", "🛵", "by_scooter.png", false],
+      ["by train", "搭火車", "🚆", "by_train.png", false],
+      ["by plane", "搭飛機", "✈️", "by_plane.png", true],
+      ["by bus", "搭公車", "🚌", "by_bus.png", true],
+      ["by bike", "騎腳踏車", "🚲", "by_bike.png", false],
+      ["by car", "搭汽車", "🚗", "by_car.png", true],
+      ["by taxi", "搭計程車", "🚕", "by_taxi.png", false],
+      ["by ferry", "搭渡輪", "⛴️", "by_ferry.png", false],
+      ["by HSR", "搭高鐵", "🚄", "by_HSR.png", false],
+      ["by MRT", "搭捷運", "🚇", "by_MRT.png", true],
+      ["by LRT", "搭輕軌", "🚈", "by_LRT.png", false],
+      ["on foot", "步行", "🚶", "on_foot.png", true]
+    ];
+
+    const rawSentences = [
+      ["There is ___ apple.", "an", "這裡有一顆蘋果。", "an_apple.png", false],
+      ["There are ___ apples.", "some", "這裡有一些蘋果。", "some_apples.png", false],
+      ["There is a bag ___ apples.", "of", "這裡有一袋蘋果。", "a_bag_of_apples.png", false],
+      ["There is some ___.", "flour", "這裡有一些麵粉。", "some_flour.png", false],
+      ["There is a bag of ___.", "flour", "這裡有一袋麵粉。", "a_flour.png", false],
+      ["How many pears do you ___?", "need", "你需要幾顆水梨？", "pears.png", false],
+      ["How many pears do they ___?", "need", "他們需要幾顆水梨？", "pears.png", false],
+      ["I ___ a box of pears.", "need", "我需要一盒水梨。", "pears.png", false],
+      ["They ___ a box of pears.", "need", "他們需要一盒水梨。", "pears.png", false],
+      ["How many pears does he ___?", "need", "他需要幾顆水梨？", "pears.png", false],
+      ["How many pears does she ___?", "need", "她需要幾顆水梨？", "pears.png", false],
+      ["He ___ a box of pears.", "needs", "他需要一盒水梨。", "pears.png", false],
+      ["She ___ a box of pears.", "needs", "她需要一盒水梨。", "pears.png", false],
+      ["How much milk do you ___?", "need", "你需要多少牛奶？", "need_milk.png", false],
+      ["How much milk do they ___?", "need", "他們需要多少牛奶？", "need_milk.png", false],
+      ["I ___ a carton of milk.", "need", "我需要一紙盒牛奶。", "need_milk.png", false],
+      ["They ___ a carton of milk.", "need", "他們需要一紙盒牛奶。", "need_milk.png", false],
+      ["How much lemonade does she ___?", "need", "她需要多少檸檬汁？", "need_lemonade.png", false],
+      ["She needs a glass ___ lemonade.", "of", "她需要一杯檸檬汁。", "need_lemonade.png", false],
+      ["How are you going to get ___?", "there", "你打算怎麼去那裡？","by_car.png", false],
+      ["How are they going to get ___?", "there", "他們打算怎麼去那裡？","by_car.png", false],
+      ["How is he going to get ___?", "there", "他打算怎麼去那裡？", "by_car.png", false],
+      ["How is she going to get ___?", "there", "她打算怎麼去那裡？","by_car.png", false],
+      ["I'm going to get there ___ car.", "by", "我打算搭汽車到那裡。","by_car.png", false],
+      ["They're going to get there ___ train.", "by", "他們打算搭火車到那裡。", "train.png", false],
+      ["He's going to get there ___ train.", "by", "他打算搭火車到那裡。","", "train.png", false],
+      ["She's going to get there ___ train.", "by", "她打算搭火車到那裡。","train.png", false],
+      ["What time does the MRT ___?", "leave", "捷運幾點發車？","MRT.png", false],
+      ["What time does the MRT ___?", "arrive", "捷運幾點抵達？", "MRT.png", false],
+      ["It leaves ___ 5:00.", "at", "它在 5:00 發車。",  "train.png", false],
+      ["It arrives ___ 5:00.", "at", "它在 5:00 抵達。",  "train.png", false],
+      ["How much ___ the ticket?", "is", "這張票多少錢？", "300.png", false],
+      ["It's 300 ___.", "dollars", "票價是 300 元。", "300.png", false],
+      ["How much ___ the tickets?", "are", "這些票多少錢？",  "300.png", false],
+      ["They're 600 ___.", "dollars", "這些票是 600 元。",  "600.png", false],
+      ["How long does it ___ by bus?", "take", "搭公車要花多久時間？","by_bus.png", false],
+      ["It takes 15 ___.", "minutes", "這需要 15 分鐘。", "time.png", false]
+    ];
+
+    const foods = rawFoods.map(([en, zh, emoji, img, star]) => ({ category: "Foods", en, zh, emoji, img, star }));
+    const quantifiers = rawQuantifiers.map(([en, zh, emoji, img, star]) => ({ category: "Quantifiers", en, zh, emoji, img, star }));
+    const transportation = rawTransportation.map(([en, zh, emoji, img, star]) => ({ category: "Transportation", en, zh, emoji, img, star }));
+    const sentences = rawSentences.map(([en, answer, zh, img, star]) => ({ category: "Sentences", en, answer, zh, emoji: "✏️", img: img || "", star }));
+
+    const questions = [...foods, ...quantifiers, ...transportation, ...sentences];
+
+    const $ = id => document.getElementById(id);
+
+    let round = [];
+    let index = 0;
+    let score = 0;
+    let answered = false;
+    let wrongList = [];
+
+    function startGame() {
+      const category = $("category").value;
+      const countVal = $("questionCount").value;
+
+      let filtered = questions
+        .filter(q => category === "all" || q.category === category)
+        .sort(() => Math.random() - 0.5);
+
+      if (countVal !== "all") {
+        const limit = parseInt(countVal, 10);
+        filtered = filtered.slice(0, limit);
+      }
+
+      round = filtered;
+
+      index = 0;
+      score = 0;
+      wrongList = [];
+      $("score").textContent = score;
+      $("quiz").classList.remove("hidden");
+      $("result").classList.add("hidden");
+      renderQuestion();
+    }
+
+    function renderQuestion() {
+      if (!round.length) return;
+
+      answered = false;
+      $("nextBtn").disabled = true;
+      $("feedback").textContent = "";
+      $("feedback").className = "feedback";
+
+      const q = round[index];
+      const selectedMode = $("mode").value;
+      let mode = selectedMode;
+
+      if (mode === "mixed") {
+        mode = q.category === "Sentences"
+          ? "blank"
+          : (index % 2 === 0 ? "choice" : "typing");
+      }
+
+      $("counter").textContent = `第 ${index + 1} / ${round.length} 題`;
+      $("progress").style.width = `${(index / round.length) * 100}%`;
+
+      const pictureArea = $("picture");
+      pictureArea.innerHTML = "";
+
+      if (q.img) {
+        const img = document.createElement("img");
+        img.src = q.img.startsWith("images/") ? q.img : `images/${q.img}`;
+        img.alt = q.zh || q.en;
+        img.onerror = () => {
+          pictureArea.textContent = q.emoji || "📘";
+        };
+        pictureArea.appendChild(img);
+      } else {
+        pictureArea.textContent = q.emoji || "📘";
+      }
+
+      $("questionMeta").textContent = categoryName(q.category) + (q.star ? " ★ 重點" : "");
+
+      const area = $("answerArea");
+      area.innerHTML = "";
+
+      $("speakBtn").onclick = (e) => {
+        e.stopPropagation();
+        const speakText = q.category === "Sentences" ? q.en.replace("___", q.answer) : q.en;
+        speak(speakText);
+      };
+
+      if (q.category === "Sentences") {
+        $("prompt").textContent = `${q.en}（${q.zh}）`;
+        if (mode === "choice") {
+          showSentenceChoices(area, q);
+        } else {
+          showInput(area, q.answer);
+        }
+        return;
+      }
+
+      if (mode === "choice") {
+        if (q.category === "Foods") {
+          $("prompt").textContent = "看提示圖片，選出正確的英文單字。";
+        } else {
+          $("prompt").textContent = `請選出「${q.zh}」的英文。`;
+        }
+        showChoices(area, q, "en");
+      } else {
+        $("prompt").textContent = `請輸入「${q.zh}」的英文。`;
+        showInput(area, q.en);
+      }
+    }
+
+    function categoryName(category) {
+      return {
+        Foods: "Foods 食物",
+        Quantifiers: "Quantifiers 量詞",
+        Transportation: "Transportation 交通工具",
+        Sentences: "Sentences 句型"
+      }[category] || category;
+    }
+
+    function showChoices(area, q, field) {
+      const pool = questions.filter(item => item.category === q.category && item !== q);
+      const options = [q, ...pool.sort(() => Math.random() - 0.5).slice(0, 3)]
+        .sort(() => Math.random() - 0.5);
+
+      const list = document.createElement("div");
+      list.className = "answers";
+
+      options.forEach(option => {
+        const button = document.createElement("button");
+        button.className = "choice";
+        button.textContent = option[field];
+        button.onclick = (e) => {
+          e.stopPropagation();
+          checkAnswer(option[field], q[field], button, list, q);
+        };
+        list.appendChild(button);
+      });
+
+      area.appendChild(list);
+    }
+
+    function showSentenceChoices(area, q) {
+      const possible = [
+        "a", "an", "some", "of", "do", "does", "need", "needs",
+        "by", "there", "leave", "arrive", "at", "is", "are",
+        "dollars", "take", "minutes", "flour"
+      ];
+
+      const options = [
+        q.answer,
+        ...possible.filter(word => word !== q.answer)
+          .sort(() => Math.random() - 0.5)
+          .slice(0, 3)
+      ].sort(() => Math.random() - 0.5);
+
+      const list = document.createElement("div");
+      list.className = "answers";
+
+      options.forEach(answer => {
+        const button = document.createElement("button");
+        button.className = "choice";
+        button.textContent = answer;
+        button.onclick = (e) => {
+          e.stopPropagation();
+          checkAnswer(answer, q.answer, button, list, q);
+        };
+        list.appendChild(button);
+      });
+
+      area.appendChild(list);
+    }
+
+    function showInput(area, correctAnswer) {
+      const row = document.createElement("div");
+      row.className = "input-row";
+
+      const input = document.createElement("input");
+      input.type = "text";
+      input.placeholder = "輸入答案";
+      input.autocomplete = "off";
+
+      const button = document.createElement("button");
+      button.className = "action";
+      button.textContent = "送出";
+      button.onclick = (e) => {
+        e.stopPropagation();
+        checkAnswer(input.value, correctAnswer, null, null, round[index]);
+      };
+
+      input.onclick = (e) => e.stopPropagation();
+      input.addEventListener("keydown", event => {
+        if (event.key === "Enter") {
+          event.stopPropagation();
+          if (!answered) {
+            button.click();
+          } else {
+            nextQuestion();
+          }
+        }
+      });
+
+      row.append(input, button);
+      area.appendChild(row);
+      input.focus();
+    }
+
+    function checkAnswer(given, correct, selectedButton, list, currentQ) {
+      if (answered) return;
+      answered = true;
+
+      const isCorrect = given.trim().toLowerCase() === correct.trim().toLowerCase();
+
+      if (isCorrect) {
+        score++;
+        $("score").textContent = score;
+        $("feedback").textContent = "答對了！🎉 (按 Enter 鍵或點擊任意處進入下一題)";
+        $("feedback").className = "feedback good";
+        speak("Correct!");
+      } else {
+        $("feedback").textContent = `再加油！正確答案是：${correct} (按 Enter 鍵進入下一題)`;
+        $("feedback").className = "feedback bad";
+        wrongList.push({ ...currentQ, userGiven: given, targetCorrect: correct });
+      }
+
+      if (selectedButton && list) {
+        list.querySelectorAll("button").forEach(button => {
+          button.disabled = true;
+          if (button.textContent === correct) button.classList.add("correct");
+        });
+        if (!isCorrect) selectedButton.classList.add("wrong");
+      } else {
+        $("answerArea").querySelectorAll("input, button").forEach(element => {
+          element.disabled = true;
+        });
+      }
+
+      $("nextBtn").disabled = false;
+    }
+
+    function speak(text) {
+      if ("speechSynthesis" in window) {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = "en-US";
+        utterance.rate = 0.9;
+        window.speechSynthesis.speak(utterance);
+      }
+    }
+
+    function nextQuestion() {
+      if (!answered) return;
+
+      index++;
+
+      if (index >= round.length) {
+        $("quiz").classList.add("hidden");
+        $("result").classList.remove("hidden");
+        $("progress").style.width = "100%";
+        $("resultText").textContent = `本次練習共 ${round.length} 題，您答對了 ${score} 題！`;
+
+        const reviewArea = $("reviewArea");
+        const reviewList = $("reviewList");
+        reviewList.innerHTML = "";
+
+        if (wrongList.length > 0) {
+          reviewArea.classList.remove("hidden");
+          wrongList.forEach(item => {
+            const div = document.createElement("div");
+            div.className = "review-item";
+            const qTitle = item.category === "Sentences" ? item.en : item.zh;
+            div.innerHTML = `<strong>${qTitle}</strong><br><span style="color:#c64c4c">您的回答：${item.userGiven || "(未作答)"}</span> ➔ <span style="color:#21834b">正確答案：${item.targetCorrect}</span>`;
+            reviewList.appendChild(div);
+          });
+        } else {
+          reviewArea.classList.add("hidden");
+        }
+      } else {
+        renderQuestion();
+      }
+    }
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" && answered) {
+        nextQuestion();
+      }
+    });
+
+    $("quizCard").onclick = () => {
+      if (answered) {
+        nextQuestion();
+      }
+    };
+
+    $("nextBtn").onclick = (e) => {
+      e.stopPropagation();
+      nextQuestion();
+    };
+
+    $("restartBtn").onclick = startGame;
+    $("category").onchange = startGame;
+    $("mode").onchange = startGame;
+    $("questionCount").onchange = startGame;
+
+    startGame();
+  </script>
+</body>
+</html>
